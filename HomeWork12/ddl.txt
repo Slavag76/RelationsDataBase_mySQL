@@ -1,0 +1,214 @@
+-
+-- Create table [dbo].[sysdiagrams]
+--
+PRINT (N'Create table [dbo].[sysdiagrams]')
+GO
+CREATE TABLE dbo.sysdiagrams (
+  name sysname NOT NULL,
+  principal_id int NOT NULL,
+  diagram_id int IDENTITY,
+  version int NULL,
+  definition varbinary(max) NULL,
+  PRIMARY KEY CLUSTERED (diagram_id),
+  CONSTRAINT UK_principal_name UNIQUE (principal_id, name)
+)
+ON [PRIMARY]
+TEXTIMAGE_ON [PRIMARY]
+GO
+
+--
+-- Create table [dbo].[Proizvoditeli]
+--
+PRINT (N'Create table [dbo].[Proizvoditeli]')
+GO
+CREATE TABLE dbo.Proizvoditeli (
+  ID int NOT NULL,
+  Name nvarchar(50) NULL,
+  Years nvarchar(50) NULL,
+  CONSTRAINT PK_Proizvoditeli PRIMARY KEY CLUSTERED (ID)
+)
+ON [PRIMARY]
+GO
+
+--
+-- Create table [dbo].[Poselok]
+--
+PRINT (N'Create table [dbo].[Poselok]')
+GO
+CREATE TABLE dbo.Poselok (
+  ID int NOT NULL,
+  Name nvarchar(50) NULL,
+  CONSTRAINT PK_Poselok PRIMARY KEY CLUSTERED (ID)
+)
+ON [PRIMARY]
+GO
+
+--
+-- Create table [dbo].[Material]
+--
+PRINT (N'Create table [dbo].[Material]')
+GO
+CREATE TABLE dbo.Material (
+  ID int NOT NULL,
+  Name nvarchar(50) NULL,
+  Massa nvarchar(50) NULL,
+  ProizvoditeliID int NULL,
+  CONSTRAINT PK_Material PRIMARY KEY CLUSTERED (ID)
+)
+ON [PRIMARY]
+GO
+
+--
+-- Create table [dbo].[Krovlya]
+--
+PRINT (N'Create table [dbo].[Krovlya]')
+GO
+CREATE TABLE dbo.Krovlya (
+  ID int NOT NULL,
+  Name nvarchar(50) NULL,
+  FirmaID int NULL,
+  MaterialID int NULL,
+  CONSTRAINT PK_Krovlya PRIMARY KEY CLUSTERED (ID)
+)
+ON [PRIMARY]
+GO
+
+--
+-- Create table [dbo].[Klient]
+--
+PRINT (N'Create table [dbo].[Klient]')
+GO
+CREATE TABLE dbo.Klient (
+  ID int NOT NULL,
+  Name nvarchar(50) NULL,
+  Date date NULL,
+  ProjectID int NULL,
+  PoselokID int NULL,
+  CONSTRAINT PK_Klient PRIMARY KEY CLUSTERED (ID)
+)
+ON [PRIMARY]
+GO
+
+--
+-- Create table [dbo].[Foundament]
+--
+PRINT (N'Create table [dbo].[Foundament]')
+GO
+CREATE TABLE dbo.Foundament (
+  ID int NOT NULL,
+  Name nvarchar(50) NULL,
+  FirmaID int NULL,
+  CONSTRAINT PK_Foundament PRIMARY KEY CLUSTERED (ID)
+)
+ON [PRIMARY]
+GO
+
+--
+-- Create table [dbo].[Firma]
+--
+PRINT (N'Create table [dbo].[Firma]')
+GO
+CREATE TABLE dbo.Firma (
+  ID int NOT NULL,
+  Name nvarchar(50) NULL,
+  CONSTRAINT PK_Firma PRIMARY KEY CLUSTERED (ID)
+)
+ON [PRIMARY]
+GO
+
+--
+-- Create table [dbo].[Project]
+--
+PRINT (N'Create table [dbo].[Project]')
+GO
+CREATE TABLE dbo.Project (
+  ID int NOT NULL,
+  Price decimal(32, 2) NULL,
+  MaterialID int NULL,
+  FoundamentID int NULL,
+  KrovlyaID int NULL,
+  CONSTRAINT PK_Project PRIMARY KEY CLUSTERED (ID)
+)
+ON [PRIMARY]
+GO
+
+SET QUOTED_IDENTIFIER, ANSI_NULLS ON
+GO
+PRINT (N'Create foreign key [FK_Material_Proizvoditeli] on table [dbo].[Material]')
+GO
+ALTER TABLE dbo.Material
+  ADD CONSTRAINT FK_Material_Proizvoditeli FOREIGN KEY (ProizvoditeliID) REFERENCES dbo.Proizvoditeli (ID)
+GO
+
+--
+-- Create foreign key [FK_Krovlya_Firma] on table [dbo].[Krovlya]
+--
+PRINT (N'Create foreign key [FK_Krovlya_Firma] on table [dbo].[Krovlya]')
+GO
+ALTER TABLE dbo.Krovlya
+  ADD CONSTRAINT FK_Krovlya_Firma FOREIGN KEY (FirmaID) REFERENCES dbo.Firma (ID)
+GO
+
+--
+-- Create foreign key [FK_Krovlya_Material] on table [dbo].[Krovlya]
+--
+PRINT (N'Create foreign key [FK_Krovlya_Material] on table [dbo].[Krovlya]')
+GO
+ALTER TABLE dbo.Krovlya
+  ADD CONSTRAINT FK_Krovlya_Material FOREIGN KEY (FirmaID) REFERENCES dbo.Material (ID)
+GO
+
+--
+-- Create foreign key [FK_Foundament_Firma] on table [dbo].[Foundament]
+--
+PRINT (N'Create foreign key [FK_Foundament_Firma] on table [dbo].[Foundament]')
+GO
+ALTER TABLE dbo.Foundament
+  ADD CONSTRAINT FK_Foundament_Firma FOREIGN KEY (FirmaID) REFERENCES dbo.Firma (ID)
+GO
+
+--
+-- Create foreign key [FK_Project_Foundament] on table [dbo].[Project]
+--
+PRINT (N'Create foreign key [FK_Project_Foundament] on table [dbo].[Project]')
+GO
+ALTER TABLE dbo.Project
+  ADD CONSTRAINT FK_Project_Foundament FOREIGN KEY (FoundamentID) REFERENCES dbo.Foundament (ID)
+GO
+
+--
+-- Create foreign key [FK_Project_Krovlya] on table [dbo].[Project]
+--
+PRINT (N'Create foreign key [FK_Project_Krovlya] on table [dbo].[Project]')
+GO
+ALTER TABLE dbo.Project
+  ADD CONSTRAINT FK_Project_Krovlya FOREIGN KEY (KrovlyaID) REFERENCES dbo.Krovlya (ID)
+GO
+
+--
+-- Create foreign key [FK_Project_Material] on table [dbo].[Project]
+--
+PRINT (N'Create foreign key [FK_Project_Material] on table [dbo].[Project]')
+GO
+ALTER TABLE dbo.Project
+  ADD CONSTRAINT FK_Project_Material FOREIGN KEY (MaterialID) REFERENCES dbo.Material (ID)
+GO
+
+--
+-- Create foreign key [FK_Klient_Poselok] on table [dbo].[Klient]
+--
+PRINT (N'Create foreign key [FK_Klient_Poselok] on table [dbo].[Klient]')
+GO
+ALTER TABLE dbo.Klient
+  ADD CONSTRAINT FK_Klient_Poselok FOREIGN KEY (PoselokID) REFERENCES dbo.Poselok (ID)
+GO
+
+--
+-- Create foreign key [FK_Klient_Project] on table [dbo].[Klient]
+--
+PRINT (N'Create foreign key [FK_Klient_Project] on table [dbo].[Klient]')
+GO
+ALTER TABLE dbo.Klient
+  ADD CONSTRAINT FK_Klient_Project FOREIGN KEY (ProjectID) REFERENCES dbo.Project (ID)
+GO
+
